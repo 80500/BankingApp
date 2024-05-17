@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: bankapp-eta-container
-        image: prajwal/bankapp-eta-app
+        image: 1ga15cv080/bankapp-eta-app
         ports:
         - containerPort: 8082
 ---
