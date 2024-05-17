@@ -1,10 +1,6 @@
 pipeline {
     agent { label 'Slave1' }	
 
-    tools {
-        // Install the Maven version configured as "M3" and add it to the path.
-        maven "maven_3.6.3"
-    }
 
 	environment {	
 		DOCKERHUB_CREDENTIALS=credentials('dockerloginid')
@@ -14,7 +10,7 @@ pipeline {
         stage('SCM Checkout') {
             steps {
                 // Get some code from a GitHub repository
-              git 'https://github.com/80500/star-agile-banking-finance.git'
+                git 'https://github.com/80500/star-agile-banking-finance.git'
             }
 		}
         stage('Maven Build') {
@@ -26,9 +22,9 @@ pipeline {
        stage("Docker build"){
             steps {
 				sh 'docker version'
-				sh "docker build -t prajwal/bankapp-eta-app:${BUILD_NUMBER} ."
+				sh "docker build -t 1ga15cv080/bankapp-eta-app:${BUILD_NUMBER} ."
 				sh 'docker image list'
-				sh "docker tag prajwal/bankapp-eta-app:${BUILD_NUMBER} prajwal/bankapp-eta-app:latest"
+				sh "docker tag 1ga15cv080/bankapp-eta-app:${BUILD_NUMBER} 1ga15cv080/bankapp-eta-app:latest"
             }
         }
 		stage('Login2DockerHub') {
@@ -40,15 +36,16 @@ pipeline {
 		stage('Push2DockerHub') {
 
 			steps {
-				sh "docker push prajwal/bankapp-eta-app:latest"
+				sh "docker push 1ga15cv080/bankapp-eta-app:latest"
 			}
 		}
-        stage('Deploy to Kubernetes Dev Environment') {
+        stage('Deploy to Kubernetes Environment') {
             steps {
 		script {
-		sshPublisher(publishers: [sshPublisherDesc(configName: 'Kubernetes', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: 'kubectl apply -f kubernetesdeploy.yaml', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '.', remoteDirectorySDF: false, removePrefix: '', sourceFiles: '*.yaml')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
+		sshPublisher(publishers: [sshPublisherDesc(configName: 'Kubernetes-Cluster', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: 'kubectl apply -f kubernetesdeploy.yaml', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '.', remoteDirectorySDF: false, removePrefix: '', sourceFiles: 'kubernetesdeploy.yaml')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
 		       }
             }
     	}
     }
-}
+}	
+	
